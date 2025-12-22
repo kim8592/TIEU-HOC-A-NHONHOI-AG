@@ -1,0 +1,101 @@
+body{
+  margin:0;
+  font-family:Arial;
+  background:#050b2c;
+  color:white;
+}
+
+header{
+  background:#020617;
+  padding:10px;
+}
+
+header button{
+  padding:8px 14px;
+  margin-right:10px;
+  cursor:pointer;
+}
+
+section{
+  display:none;
+  padding:20px;
+}
+
+section.active{
+  display:block;
+}
+
+textarea,input,select{
+  width:100%;
+  margin:6px 0;
+  padding:6px;
+}
+
+#presentBox{
+  text-align:center;
+}
+
+#nameDisplay{
+  font-size:60px;
+  margin:20px 0;
+  text-shadow:0 0 20px cyan;
+}
+
+#quizOptions button{
+  display:block;
+  margin:10px auto;
+  padding:10px;
+  width:300px;
+  font-size:18px;
+  cursor:pointer;
+}
+/* Đáp án bình thường */
+#quizOptions button{
+  background:#0b1a3a;
+  color:white;
+  border:2px solid #1e90ff;
+  transition:0.2s;
+}
+
+/* Đáp án đang được tay chọn */
+#quizOptions button.active{
+  background:#ffcc00;
+  color:black;
+  box-shadow:0 0 20px #ffcc00;
+  transform:scale(1.05);
+}
+
+/* Đúng */
+#quizOptions button.correct{
+  background:#00ff99;
+  box-shadow:0 0 25px #00ff99;
+}
+
+/* Sai */
+#quizOptions button.wrong{
+  background:#ff4444;
+  box-shadow:0 0 25px #ff4444;
+}
+
+/* ===== Nút đáp án tự giãn và canh giữa ===== */
+#quizOptions {
+  display: flex;
+  flex-direction: column;  /* mỗi nút trên 1 dòng */
+  align-items: center;     /* canh giữa container */
+  gap: 10px;               /* khoảng cách giữa các nút */
+  margin-top: 15px;
+}
+
+#quizOptions button {
+  display: inline-block;
+  min-width: 150px;       /* không quá bé */
+  max-width: 80%;         /* tối đa 80% container */
+  padding: 10px 20px;
+  font-size: 18px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  word-wrap: break-word;  /* xuống dòng nếu chữ dài */
+  white-space: normal;
+}
+
