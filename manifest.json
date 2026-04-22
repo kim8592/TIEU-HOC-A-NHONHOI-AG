@@ -1,0 +1,19 @@
+{
+  "short_name": "DGTH",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512", 
+      "type": "image/png"
+    },
+    {
+      "src": "robot.png",
+      "sizes": "512x511",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff"
+}

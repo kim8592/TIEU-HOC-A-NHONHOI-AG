@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGTH – Hệ thống đánh giá thường xuyên học sinh Tiểu học</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Lớp phủ làm mờ nền cực đậm */
+        #install-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* Độ đậm 90% để che form đăng nhập */
+            backdrop-filter: blur(8px); /* Thêm hiệu ứng làm mờ nền */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999; /* Đảm bảo nằm trên mọi thứ của React */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #install-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Khung nội dung Popup */
+        #install-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        #install-overlay.show #install-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <div id="install-overlay">
+        <div id="install-content">
+            <img src="logo.png" alt="Logo" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg border-4 border-gray-100">
+            <h3 class="text-2xl font-extrabold text-gray-900 mb-3 tracking-tight">Cài đặt DGTH</h3>
+            <p class="text-gray-600 mb-8 text-base leading-relaxed">Để có trải nghiệm chuyên nghiệp, nhanh chóng và bảo mật hơn, vui lòng cài đặt ứng dụng lên màn hình thiết bị của bạn.</p>
+            <div class="flex flex-col gap-3">
+                <button id="btn-install-now" class="bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-md text-lg">
+                    Cài đặt ngay
+                </button>
+                <button id="btn-close-popup" class="text-gray-400 text-sm py-2 hover:text-gray-600">
+                    Sử dụng bản web (hạn chế tính năng)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Đăng ký Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(function() {
+                console.log('DGTH Service Worker Ready');
+            });
+        }
+
+        let deferredPrompt;
+        const installOverlay = document.getElementById('install-overlay');
+        const btnInstall = document.getElementById('btn-install-now');
+        const btnClose = document.getElementById('btn-close-popup');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Ngăn trình duyệt hiện thanh mặc định nhỏ xíu ở dưới
+            e.preventDefault();
+            // Lưu sự kiện lại
+            deferredPrompt = e;
+
+            // HIỆN NGAY LẬP TỨC để đè lên form đăng nhập của React
+            setTimeout(() => {
+                if (installOverlay) {
+                    installOverlay.classList.add('show');
+                }
+            }, 100); // Đợi 0.1 giây để chắc chắn HTML đã load xong
+        });
+
+        // Xử lý nút "Cài đặt ngay"
+        btnInstall.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Hiện bảng cài đặt thực sự của trình duyệt (bắt buộc phải có bước này)
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                installOverlay.classList.remove('show');
+            }
+        });
+
+        // Xử lý nút "Sử dụng bản web"
+        btnClose.addEventListener('click', () => {
+            installOverlay.classList.remove('show');
+        });
+
+        // Tự động ẩn nếu ứng dụng đã được cài đặt thành công
+        window.addEventListener('appinstalled', () => {
+            installOverlay.classList.remove('show');
+            deferredPrompt = null;
+        });
+    </script>
+
+    <script type="text/babel" src="firebase.js"></script>
+    <script type="text/babel" src="script.js"></script>
+</body>
+</html>
